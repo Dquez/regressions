@@ -12,10 +12,8 @@ let {features, labels, testFeatures, testLabels} = loadCSV('./cars.csv', {
 
 const regression = new LinearRegression(features, labels, {
     learningRate: 0.0001,
-    iterations: 1000
-})
+    iterations: 100
+}, testFeatures, testLabels)
 
 regression.train();
-
-console.log('updated b: ', regression.weights.get(0,0))
-console.log('updated m: ', regression.weights.get(1,0))
+regression.test(testFeatures, testLabels);
