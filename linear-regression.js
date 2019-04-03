@@ -55,7 +55,18 @@ class LinearRegression {
         
         testFeatures = tf.ones([testFeatures.shape[0], 1]).concat(testFeatures, 1);
         const predictions = testFeatures.matMul(this.weights);
-        predictions.print();
+        // Equation is Sum of Squares of Residuals / SSres
+        const res = testLabels.sub(predictions)
+            // raise to the second power, element-wise operation
+            .pow(2)
+            .sum()
+            .get()
+        // .sub() is element wise, subtract the mean of all the labels
+        const tot = testLabels.sub(testLabels.mean())
+            .pow(2)
+            .sum()
+            .get()
+        return 1 - res / tot
     }
 }
 
