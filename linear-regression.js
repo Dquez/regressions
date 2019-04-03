@@ -1,4 +1,4 @@
-const tf = require('@tensorflow/tfjs-node');
+const tf = require('@tensorflow/tfjs');
 const _ = require('lodash');
 
 class LinearRegression {
@@ -8,8 +8,6 @@ class LinearRegression {
         // creates a tensor of shape [this.features.shape[0]/rows, 1 col] and concatenates the result to the features tensor along the horizontal/y axis
         this.features = tf.ones([this.features.shape[0], 1]).concat(this.features, 1);
         this.options = Object.assign({learningRate: .1, iterations: 1000}, options)
-        this.m = 0;
-        this.b = 0;
         this.weights = tf.zeros([2,1]);
         
     }
