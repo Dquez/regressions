@@ -17,5 +17,6 @@ const regression = new LinearRegression(features, labels, {
 
 regression.train();
 
+// r^2 or Coefficient of Determination
 const r2 = regression.test(testFeatures, testLabels);
 console.log('R2 is : ', r2)
