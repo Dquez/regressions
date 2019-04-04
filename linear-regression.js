@@ -6,7 +6,7 @@ class LinearRegression {
         this.features = this.processFeatures(features);
         this.labels = tf.tensor(labels);
         this.options = Object.assign({learningRate: .1, iterations: 1000}, options)
-        this.weights = tf.zeros([2,1]);
+        this.weights = tf.zeros([this.features.shape[1],1]);
         
     }
     train() {
@@ -66,13 +66,13 @@ class LinearRegression {
     }
     processFeatures(features){
         features = tf.tensor(features);
-        // creates a tensor of shape [this.features.shape[0]/rows, 1 col] and concatenates the result to the features tensor along the horizontal/y axis
-        features = tf.ones([features.shape[0], 1]).concat(features, 1);
         if (this.mean && this.variance) {
             features = features.sub(this.mean).div(this.variance.pow(0.5));
         } else {
             features = this.standardize(features);
         }
+        // creates a tensor of shape [this.features.shape[0]/rows, 1 col] and concatenates the result to the features tensor along the horizontal/y axis
+        features = tf.ones([features.shape[0], 1]).concat(features, 1);
         return features;
     }
     standardize(features) {
