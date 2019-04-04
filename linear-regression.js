@@ -7,11 +7,13 @@ class LinearRegression {
         this.labels = tf.tensor(labels);
         this.options = Object.assign({learningRate: .1, iterations: 1000}, options)
         this.weights = tf.zeros([this.features.shape[1],1]);
-        
+        this.mseHistory = [];
     }
     train() {
         for(let i = 0; i < this.options.iterations; i++){
             this.gradientDescent();
+            this.recordMSE();
+            this.updateLearningRate();
         }
     }
     gradientDescent() {
@@ -81,6 +83,30 @@ class LinearRegression {
         this.variance = variance;
 
         return features.sub(mean).div(variance.pow(0.5));
+    }
+    recordMSE(){
+        const mse = this.features
+            .matMul(this.weights)
+            .sub(this.labels)
+            .pow(2)
+            .sum()
+            .div(this.features.shape[0])
+            .get();
+        
+        this.mseHistory.push(mse);
+    }
+    updateLearningRate() {
+        const mseLength = this.mseHistory.length;
+        if(mseLength < 2) return;
+        
+        const lastValue = this.mseHistory[mseLength - 1];
+        const secondToLast = this.mseHistory[mseLength - 2];
+        // if the MSE is increasing, divide by 2, else increase by 5%
+        if(lastValue > secondToLast){
+            this.options.learningRate /= 2;
+        } else {
+            this.options.learningRate *= 1.05;
+        }
     }
 }
 
