@@ -68,8 +68,19 @@ class LinearRegression {
         features = tf.tensor(features);
         // creates a tensor of shape [this.features.shape[0]/rows, 1 col] and concatenates the result to the features tensor along the horizontal/y axis
         features = tf.ones([features.shape[0], 1]).concat(features, 1);
-
+        if (this.mean && this.variance) {
+            features = features.sub(this.mean).div(this.variance.pow(0.5));
+        } else {
+            features = this.standardize(features);
+        }
         return features;
+    }
+    standardize(features) {
+        const { mean, variance } = tf.moments(features, 0);
+        this.mean = mean;
+        this.variance = variance;
+
+        return features.sub(mean).div(variance.pow(0.5));
     }
 }
 
