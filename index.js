@@ -13,17 +13,23 @@ let {features, labels, testFeatures, testLabels} = loadCSV('./cars.csv', {
 
 const regression = new LinearRegression(features, labels, {
     learningRate: 0.1,
-    iterations: 100
+    iterations: 10,
+    batchSize: 10
 }, testFeatures, testLabels)
 
 regression.train();
 
 // r^2 or Coefficient of Determination
 const r2 = regression.test(testFeatures, testLabels);
+console.log('R2 is : ', r2);
+
+regression.predict([
+    // horsepower, weight, displacement
+    [130, 1.752, 307]
+]).print();
 
 plot({
-    x: regression.bHistory,
-    y: regression.mseHistory,
-    xLabel: 'Value of B',
+    x: regression.mseHistory,
+    xLabel: 'Iteration #',
     yLabel: 'Mean Squared Error'
 })

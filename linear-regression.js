@@ -8,29 +8,34 @@ class LinearRegression {
         this.options = Object.assign({learningRate: .1, iterations: 1000}, options)
         this.weights = tf.zeros([this.features.shape[1],1]);
         this.mseHistory = [];
-        this.bHistory = [];
 
     }
     train() {
-        for(let i = 0; i < this.options.iterations; i++){
-            this.bHistory.push(this.weihts.get(0,0))
-            this.gradientDescent();
+        const batchQuantity = Math.floor(this.features.shape[0] / this.options.batchSize)
+        for(let i = 0; i < this.options.iterations; i++){            
+            for(let j = 0; j < batchQuantity; j++){
+                const { batchSize } = this.options;
+                const startIndex = j * batchSize;
+                const featureSlice = this.features.slice([startIndex, 0], [batchSize, -1])
+                const labelSlice = this.labels.slice([startIndex, 0], [batchSize, -1])
+                this.gradientDescent(featureSlice, labelSlice);
+            }
             this.recordMSE();
             this.updateLearningRate();
         }
     }
-    gradientDescent() {
+    gradientDescent(features, labels) {
         // currentGuess is a matrix multiplication of [[m], [b]] which is equivalent to doing guess/y = mx + b for every feature
-        const currentGuesses = this.features.matMul(this.weights);
-        const differences = currentGuesses.sub(this.labels);
+        const currentGuesses = features.matMul(this.weights);
+        const differences = currentGuesses.sub(labels);
 
-        const slopes = this.features
+        const slopes = features
             // transpose the feature matrix which is originally row by column tensor/matrix with ones concatenated. Now it's a col by row matrix, where each column is a feature and a value of one, and there are only two rows, one for the features and one for the 1's
             .transpose()
             // multiply the features by the differences btwn (mx + b) - labels
             .matMul(differences)
             // divide by n, or the total number of entries
-            .div(this.features.shape[0])
+            .div(features.shape[0])
         this.weights = this.weights.sub(slopes.mul(this.options.learningRate));
     }
 //     gradientDescent() {
@@ -79,6 +84,9 @@ class LinearRegression {
         // creates a tensor of shape [this.features.shape[0]/rows, 1 col] and concatenates the result to the features tensor along the horizontal/y axis
         features = tf.ones([features.shape[0], 1]).concat(features, 1);
         return features;
+    }
+    predict(observations) {
+        return this.processFeatures(observations).matMul(this.weights);
     }
     standardize(features) {
         const { mean, variance } = tf.moments(features, 0);
