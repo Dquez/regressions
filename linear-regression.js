@@ -8,9 +8,12 @@ class LinearRegression {
         this.options = Object.assign({learningRate: .1, iterations: 1000}, options)
         this.weights = tf.zeros([this.features.shape[1],1]);
         this.mseHistory = [];
+        this.bHistory = [];
+
     }
     train() {
         for(let i = 0; i < this.options.iterations; i++){
+            this.bHistory.push(this.weihts.get(0,0))
             this.gradientDescent();
             this.recordMSE();
             this.updateLearningRate();

@@ -22,7 +22,8 @@ regression.train();
 const r2 = regression.test(testFeatures, testLabels);
 
 plot({
-    x: regression.mseHistory,
-    xLabel: 'Iteration #',
+    x: regression.bHistory,
+    y: regression.mseHistory,
+    xLabel: 'Value of B',
     yLabel: 'Mean Squared Error'
 })
