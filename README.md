@@ -23,6 +23,15 @@ This app was bootstrapped with the [Machine Learning with Javascript](https://ww
  * Record MSE (*Mean Squared Error*) to update the learning rate based on changes to the MSE.
  * Finally, update MSE using Batch Gradient Descent 
 
+
+## Challenges I ran into
+* Develop a meaningful prediction that was at least better than taking the average MPG for all cars.
+* Understanding tensorflow and how to manipulate matrices of varying shapes together to get the mx + b formula working.
+* Determining which form of normalization of values after adding multiple features into the equation.
+
+## Accomplishments that I'm proud of
+In this current iteration, I'm using multiple methods of the tensor flow library yet the functions aren't all obfuscated. With the exception statistical theory, I can confidently follow the logic behind the matrix manipulation. Most importantly, I have a working solution that accurately predicts an MPG value based on certain features of the data set.
+
 ## Author
 
 - [Dariell Vasquez](https://github.com/Dquez)
