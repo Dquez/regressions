@@ -37,7 +37,7 @@ class LogisticRegression {
     test(testFeatures, testLabels) {
         testFeatures = this.processFeatures(testFeatures);
         testLabels = tf.tensor(testLabels);
-        const predictions = testFeatures.matMul(this.weights).sigmoid();
+        const predictions = testFeatures.matMul(this.weights);
         
         const res = testLabels.sub(predictions)
             .pow(2)
@@ -60,7 +60,7 @@ class LogisticRegression {
         return features;
     }
     predict(observations) {
-        return this.processFeatures(observations).matMul(this.weights);
+        return this.processFeatures(observations).matMul(this.weights).sigmoid();
     }
     standardize(features) {
         const { mean, variance } = tf.moments(features, 0);
