@@ -1,6 +1,6 @@
 # Regressions
 
-Regressions is a multivariate linear regression algorithm that predicts the mpg of a car based on certain values, namely horsepower, weight, and displacement.
+Regressions is a multivariate regression algorithm that predicts the mpg of a car based on certain values, namely horsepower, weight, and displacement. It's broken into three separate types of regression, denoted by their folder respective folders: linear, logisitic and multinominal regression.
 
 ## Built With
 
