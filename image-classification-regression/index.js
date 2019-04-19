@@ -5,7 +5,7 @@ const LogisticRegression = require('./logistic-regression');
 const mnist = require('mnist-data');
 
 // grab the first ten numbers from training data
-const mnistData = mnist.training(0,1000);
+const mnistData = mnist.training(0,5000);
 
 // map over numbers to create 1 condensed array for each number with corresponding grayscale values.
 const features = mnistData.images.values.map(image => _.flatMap(image));
@@ -18,7 +18,7 @@ const encodedLabels = mnistData.labels.values.map(label=> {
 
 const regression = new LogisticRegression(features, encodedLabels, {
     learningRate: 1,
-    iterations: 5,
+    iterations: 20,
     batchSize: 100
 })
 
