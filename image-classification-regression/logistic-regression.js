@@ -17,9 +17,12 @@ class LogisticRegression {
             for(let j = 0; j < batchQuantity; j++){
                 const { batchSize } = this.options;
                 const startIndex = j * batchSize;
-                const featureSlice = this.features.slice([startIndex, 0], [batchSize, -1])
-                const labelSlice = this.labels.slice([startIndex, 0], [batchSize, -1])
-                this.gradientDescent(featureSlice, labelSlice);
+                this.weights = tf.tidy(()=> {
+                    const featureSlice = this.features.slice([startIndex, 0], [batchSize, -1])
+                    const labelSlice = this.labels.slice([startIndex, 0], [batchSize, -1])
+                    return this.gradientDescent(featureSlice, labelSlice);
+                })
+                
             }
             this.recordCost();
             this.updateLearningRate();
@@ -33,7 +36,7 @@ class LogisticRegression {
             .transpose()
             .matMul(differences)
             .div(features.shape[0])
-        this.weights = this.weights.sub(slopes.mul(this.options.learningRate));
+        return this.weights.sub(slopes.mul(this.options.learningRate));
     }
     test(testFeatures, testLabels) {
         const predictions = this.predict(testFeatures);
@@ -69,22 +72,25 @@ class LogisticRegression {
         return features.sub(mean).div(this.variance.pow(0.5));
     }
     recordCost(){
-        const guesses = this.features.matMul(this.weights).softmax();
-        const termOne = this.labels.transpose().matMul(guesses.log());
-        const termTwo = this.labels
-            .mul(-1)
-            .add(1)
-            .transpose()
-            .matMul(
-                guesses
-                    .mul(-1)
-                    .add(1)
-                    .log()
-            );
-        const cost = termOne.add(termTwo)
-                .div(this.features.shape[0])
+        const cost = tf.tidy(()=> {
+            const guesses = this.features.matMul(this.weights).softmax();
+            const termOne = this.labels.transpose().matMul(guesses.log());
+            const termTwo = this.labels
                 .mul(-1)
-                .get(0,0);
+                .add(1)
+                .transpose()
+                .matMul(
+                    guesses
+                        .mul(-1)
+                        .add(1)
+                        .log()
+                );
+            return termOne.add(termTwo)
+                    .div(this.features.shape[0])
+                    .mul(-1)
+                    .get(0,0);
+        })
+        
         this.costHistory.unshift(cost);
     }
     updateLearningRate() {
