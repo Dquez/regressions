@@ -1,5 +1,6 @@
 const fs = require('fs');
 const _ = require('lodash');
+const shuffleSeed = require('shuffle-seed');
 
 function extractColumns(data, columnNames) {
     const headers = _.first(data);
@@ -7,7 +8,7 @@ function extractColumns(data, columnNames) {
     const extracted = _.map(data, row => _.pullAt(row, indexes));
     return extracted;
 }
-function loadCSV(filename, { dataColumns = [], labelColumns = [], converters = {}}){
+function loadCSV(filename, { dataColumns = [], labelColumns = [], shuffle = true, splitTest = false, converters = {}}){
     let data = fs.readFileSync(filename, {encoding: 'utf-8'})
     // split on each new line of the csv and make an array of arrays for each element
     data = data.split('\n').map(row => row.split(','))
@@ -31,13 +32,35 @@ function loadCSV(filename, { dataColumns = [], labelColumns = [], converters = {
     data = extractColumns(data, dataColumns)
     data.shift();
     labels.shift();
-    
-    console.log(data);
+    if(shuffle) {
+        data = shuffleSeed.shuffle(data, 'secret')
+        labels = shuffleSeed.shuffle(labels, 'secret')
+    }
+
+    if (splitTest) {
+        const trainSize = _.isNumber(splitTest) ? splitTest : Math.floor(data.length / 2);
+        return {
+            features: data.slice(0, trainSize),
+            labels: labels.slice(0, trainSize),
+            testFeatures: data.slice(trainSize),
+            testLabels: labels.slice(trainSize),
+        } 
+    } else {
+        return { features: data, labels}
+    }
 }   
-loadCSV('data.csv', {
+
+const {features, testFeatures, labels, testLabels} = loadCSV('data.csv', {
     dataColumns: ['height','value'],
-    labelColumns: ['passed'], 
+    labelColumns: ['passed'],
+    shuffle: true, 
+    splitTest: 1,
     converters : {
         passed: val => val === 'TRUE'
     }
 });
+
+console.log('Features : ', features );
+console.log('Test Features : ', testFeatures );
+console.log('Labels : ', labels );
+console.log('Test Labels : ', testLabels );
