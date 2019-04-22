@@ -1,6 +1,6 @@
 require('@tensorflow/tfjs-node');
 const tf = require('@tensorflow/tfjs');
-const loadCSV = require('../load-csv');
+const loadCSV = require('../loadCSV/load-csv');
 const LinearRegression = require('./linear-regression');
 const plot = require('node-remote-plot');
 
